@@ -1,5 +1,5 @@
 
-<div class="col-md-3">
+<div class="col-lg-3">
     <div><h4>Categorias</h4></div>
   <ul class="list-group">
     <a href="{{route('thread.index')}}"><li class="list-group-item d-flex justify-content-between align-items-center">

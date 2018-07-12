@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Thread;
+use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 
@@ -11,7 +12,7 @@ class ThreadController extends Controller
 
   function __construct()
     {
-        return $this->middleware('auth')->except('index');
+        return $this->middleware('auth')->except('index','show');
     }
 
     /**
@@ -21,9 +22,11 @@ class ThreadController extends Controller
      */
     public function index()
     {
+
+      $idusers = Auth::id();
       $threads=Thread::paginate(10);
 
-      return view('thread.index', compact('threads'));
+      return view('thread.index', compact('threads','idusers'));
     }
 
     /**
@@ -65,7 +68,8 @@ class ThreadController extends Controller
      */
     public function show(Thread $thread)
     {
-        return view('thread.single',compact('thread'));
+      $idusers = Auth::id();
+        return view('thread.single',compact('thread','idusers'));
     }
 
     /**
@@ -89,13 +93,16 @@ class ThreadController extends Controller
     public function update(Request $request, Thread $thread)
     {
 
+      if(auth()->user()->id !== $thread->user_id){
+          abort(401,"unauthorized");
+      }
+
       //validate
       $this->validate($request, [
           'subject' => 'required|min:10',
           'type'    => 'required',
           'thread'  => 'required|min:20'
       ]);
-
 
       $thread->update($request->all());
 
